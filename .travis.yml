@@ -22,5 +22,5 @@ deploy:
   file: build/*
   on:
     repo: M0Rf30/qemu-kernel-rpi3
-    branch: rpi3
+    branch: master
     tags: false
