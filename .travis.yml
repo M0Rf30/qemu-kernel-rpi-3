@@ -1,0 +1,26 @@
+dist: bionic
+language: bash
+cache:
+- "$HOME/.ccache"
+addons:
+  apt:
+    packages:
+    - ccache
+services:
+- docker
+before_install:
+- docker pull m0rf30/arch-arm-crosscompile
+script:
+- docker run -u root -v $HOME/.ccache:/ccache -v $(pwd):/workspace m0rf30/arch-arm-crosscompile:latest
+  bash -c "cd /workspace/; CCACHE_DIR=/ccache ./build.sh"
+deploy:
+  provider: releases
+  api_key:
+    secure: Uew1W1jsuZWWYIiuQNwah/OjcCF24QFgTJiGm/BX3jpHgKtZAezgdh3/8AYOavksOkOy3Tt36bYLGwCg+pRN8TjsSmSrcMcD7Tgkxn9Re79R3mYl0B5aLTSMyrvFZdY8HGiY3CVY0aZlBkvvfl4iwvcKTeXoPD0K1OrQubnta46q85NMLIG89L1tbN8t4awoDZz69HNORiMP5XhUCyUrclv4SD7HGN92cn2ZJcfgJCPl+wjqNsATRngD4AzcjfzH1yVXV/B7wZf9re+xF6FPoyZdNWYwwZ6qF59++QRQWsEyUbrmp1eA68G03wUJYmiop7xcn4Nas/rRA+36JXRkyjogelA2h8MNF4kKV/t8fipqybo3ei6Duvikh4qht3FlAEQv+c2qAFRHEuLXeDrtnZ0JMRFzpMvR1yfFX5f/TIlK2ztsIsi5Tq2VXACcaH7UzzIDXh/eFcr3w5r5ezZtBWwOxyxAC5AuUozz5YbuGazja1E3vVHVjNLOb7VVo/7AuT5DTAaA6wWkPFp2x8pvVbGKtoM5PlQx1yW1/0XmOCLXNrgXUJlw017iLsPYIsjyiOurNFEjYeqcfCBvmDMLmLT8othW7lE9iR4x3pxHAHwEzO1m12sbz53Rwm348bmzGVpBg2WkQLWCxj7C8+ChbuIvyGxrguILoAAQeQR0ShU=
+  file_glob: true
+  skip_cleanup: true
+  file: build/*
+  on:
+    repo: M0Rf30/qemu-kernels-rpi-arch-arm
+    branch: rpi3
+    tags: false
