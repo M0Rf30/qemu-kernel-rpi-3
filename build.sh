@@ -5,7 +5,7 @@
 #######################################################
 MODEL=rpi3
 TOOLCHAIN=aarch64-linux-gnu
-COMMIT=$(curl -s https://www.kernel.org | grep -A1 latest_link | tail -n1 | egrep -o '>[^<]+' | egrep -o '[^>]+')
+COMMIT=$(curl -s https://www.kernel.org | grep -A1 latest_link | tail -n1 | grep -E -o '>[^<]+' | grep -E -o '[^>]+')
 export ARCH=arm64
 export CROSS_COMPILE=${TOOLCHAIN}-
 
