@@ -3,7 +3,7 @@
 # Build latest stable ARM kernel for QEMU Raspberry Pi 3 Emulation
 #
 #######################################################
-MODEL=rpi3
+MODEL=rpi_3
 TOOLCHAIN=aarch64-linux-gnu
 COMMIT=$(curl -s https://www.kernel.org | grep -A1 latest_link | tail -n1 | grep -E -o '>[^<]+' | grep -E -o '[^>]+')
 export ARCH=arm64
@@ -19,7 +19,7 @@ fi
 cd linux-$COMMIT
 
 KERNEL_VERSION=$(make kernelversion)
-KERNEL_TARGET_FILE_NAME=qemu-kernel-$MODEL-$KERNEL_VERSION-aarch64
+KERNEL_TARGET_FILE_NAME=../qemu_kernel_$MODEL-$KERNEL_VERSION
 echo "Building Qemu Raspberry Pi kernel qemu-kernel-$KERNEL_VERSION"
 
 # Config
@@ -31,4 +31,4 @@ scripts/kconfig/merge_config.sh .config ../config
 #make CC="ccache ${TOOLCHAIN}-gcc" ARCH=arm64 CROSS_COMPILE=${TOOLCHAIN}- xconfig
 make -j 4 -k CC="ccache ${TOOLCHAIN}-gcc" Image.gz
 
-cp arch/arm64/boot/Image.gz ../build/$KERNEL_TARGET_FILE_NAME
+cp arch/arm64/boot/Image.gz $KERNEL_TARGET_FILE_NAME
