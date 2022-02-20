@@ -29,6 +29,8 @@ scripts/kconfig/merge_config.sh .config ../config
 
 # Compiling
 #make CC="ccache ${TOOLCHAIN}-gcc" ARCH=arm64 CROSS_COMPILE=${TOOLCHAIN}- xconfig
-make -j 4 -k CC="ccache ${TOOLCHAIN}-gcc" Image.gz
+make -j 4 -k CC="ccache ${TOOLCHAIN}-gcc" Image
 
-cp arch/arm64/boot/Image.gz $KERNEL_TARGET_FILE_NAME
+cat arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dtb >> arch/arm64/boot/Image
+
+cp arch/arm64/boot/Image $KERNEL_TARGET_FILE_NAME
