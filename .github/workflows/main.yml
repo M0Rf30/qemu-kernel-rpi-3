@@ -24,7 +24,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1
 
@@ -32,11 +32,11 @@ jobs:
       - name: Build
         run: |
           docker run -u root -v $(pwd)/.ccache:/ccache -v $(pwd):/workspace m0rf30/arch-arm-crosscompile:latest \
-            bash -c "cd /workspace/; CCACHE_DIR=/ccache ./build.sh"
+            bash -c "cd /workspace; CCACHE_DIR=/ccache ./build.sh"
           echo "KERNEL_VER=$(ls qemu_kernel* | cut -d"-" -f 2)" >> $GITHUB_ENV
 
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: "qemu-kernel-rpi-3-${{ env.KERNEL_VER }}"
           path: |

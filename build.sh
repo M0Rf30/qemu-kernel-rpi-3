@@ -3,20 +3,27 @@
 # Build latest stable ARM kernel for QEMU Raspberry Pi 3 Emulation
 #
 #######################################################
+set -x
+
+git config --global --add safe.directory /workspace
+
 MODEL=rpi_3
+REMOTE=https://www.kernel.org
 TOOLCHAIN=aarch64-linux-gnu
-COMMIT=$(curl -s https://www.kernel.org | grep -A1 latest_link | tail -n1 | grep -E -o '>[^<]+' | grep -E -o '[^>]+')
+COMMIT=$(curl -s "$REMOTE" | grep -A1 latest_link | tail -n1 | grep -E -o '>[^<]+' | grep -E -o '[^>]+')
+VERSION=$(echo "$COMMIT" | cut -d'-' -f2 | cut -d'.' -f1)
+
 export ARCH=arm64
 export CROSS_COMPILE=${TOOLCHAIN}-
 
-curl -L -O -C - "https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$COMMIT.tar.xz" || exit 1
+curl -L -O -C - "https://cdn.kernel.org/pub/linux/kernel/v$VERSION.x/linux-$COMMIT.tar.xz" || exit 1
 
 # Kernel Compilation
-if [ ! -d linux-$COMMIT ]; then
-	tar xf linux-$COMMIT.tar.xz
+if [ ! -d "linux-$COMMIT" ]; then
+	tar xf "linux-$COMMIT.tar.xz"
 fi
 
-cd linux-$COMMIT
+cd "linux-$COMMIT" || exit 1
 
 KERNEL_VERSION=$(make kernelversion)
 KERNEL_TARGET_FILE_NAME=../qemu_kernel_$MODEL-$KERNEL_VERSION
@@ -31,6 +38,5 @@ scripts/kconfig/merge_config.sh .config ../config
 #make CC="ccache ${TOOLCHAIN}-gcc" ARCH=arm64 CROSS_COMPILE=${TOOLCHAIN}- xconfig
 make -j 4 -k CC="ccache ${TOOLCHAIN}-gcc" Image
 
-cat arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dtb >> arch/arm64/boot/Image
-
-cp arch/arm64/boot/Image $KERNEL_TARGET_FILE_NAME
+cat arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dtb >>arch/arm64/boot/Image
+cp arch/arm64/boot/Image "$KERNEL_TARGET_FILE_NAME"
