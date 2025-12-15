@@ -36,7 +36,7 @@ jobs:
           echo "KERNEL_VER=$(ls qemu_kernel* | cut -d"-" -f 2)" >> $GITHUB_ENV
 
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: "qemu-kernel-rpi-3-${{ env.KERNEL_VER }}"
           path: |
